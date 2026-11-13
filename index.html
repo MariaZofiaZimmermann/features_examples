@@ -30,34 +30,51 @@
   <main id="feature-content" aria-live="polite"></main>
   <footer>Supplementary material accompanying the research paper.</footer>
   <script>
-    // Add as many filenames as needed to each examples array.
-    // Only list files that you have actually uploaded into videos/.
+    // Each group uses its base filename and optional -2, -3, ... variants.
+    // Only files that exist in videos/ will be displayed on GitHub Pages.
     const features = [
       { name: 'Theory of Mind', color: '#008000', groups: [
-        { label: 'ToM Present', examples: ['theory-of-mind-high.mp4'] },
-        { label: 'ToM Absent', examples: [] }
+        { label: 'ToM Present', fileBase: 'theory-of-mind-high' },
+        { label: 'ToM Absent', fileBase: 'theory-of-mind-low' }
       ] },
       { name: 'Social Interaction', color: '#403878', groups: [
-        { label: 'Interaction Present', examples: [] },
-        { label: 'Interaction Absent', examples: [] }
+        { label: 'Interaction Present', fileBase: 'social-interaction-high' },
+        { label: 'Interaction Absent', fileBase: 'social-interaction-low' }
       ] },
       { name: 'Number of People', color: '#80A4C3', groups: [
-        { label: 'Multiple Characters', examples: [] },
-        { label: 'No Characters', examples: [] }
+        { label: '3 or More Agents', fileBase: 'number-of-people-high' },
+        { label: 'One Agent', fileBase: 'number-of-people-low' }
       ] },
       { name: 'Faces', color: '#1D6080', groups: [
-        { label: 'Faces Present', examples: [] },
-        { label: 'Faces Absent', examples: [] }
+        { label: 'Faces Present', fileBase: 'faces-high' },
+        { label: 'Faces Absent', fileBase: 'faces-low' }
       ] },
       { name: 'Valence', color: '#CC6948', groups: [
-        { label: 'Positive Valence', examples: [] },
-        { label: 'Negative Valence', examples: [] }
+        { label: 'Positive Valence', fileBase: 'valence-high' },
+        { label: 'Negative Valence', fileBase: 'valence-low' }
       ] },
       { name: 'Arousal', color: '#D5A6B0', groups: [
-        { label: 'High Arousal', examples: [] },
-        { label: 'Low Arousal', examples: [] }
+        { label: 'High Arousal', fileBase: 'arousal-high' },
+        { label: 'Low Arousal', fileBase: 'arousal-low' }
       ] }
     ];
+    const MAX_EXAMPLES = 30;
+    async function findVideos(fileBase) {
+      const files = [];
+      // The first missing file ends the sequence. Keep numbering consecutive.
+      for (let number = 1; number <= MAX_EXAMPLES; number++) {
+        const filename = fileBase + (number === 1 ? '' : '-' + number) + '.mp4';
+        try {
+          const response = await fetch('videos/' + filename, { method: 'HEAD' });
+          if (!response.ok) break;
+          files.push(filename);
+        } catch (error) {
+          // Local file:// previews may not support fetch; use GitHub Pages.
+          break;
+        }
+      }
+      return files;
+    }
     const nav = document.getElementById('categories');
     const main = document.getElementById('feature-content');
     features.forEach((feature, index) => {
@@ -68,7 +85,9 @@
       button.addEventListener('click', () => showFeature(index));
       nav.appendChild(button);
     });
+    let currentSelection = 0;
     function showFeature(index) {
+      currentSelection = index;
       const feature = features[index];
       [...nav.children].forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
       main.replaceChildren();
@@ -78,18 +97,26 @@
       main.appendChild(heading);
       const clips = document.createElement('div');
       clips.className = 'clips';
-      feature.groups.forEach(group => {
+      feature.groups.forEach(async group => {
         const section = document.createElement('section');
         const title = document.createElement('h3');
         title.textContent = group.label;
         section.appendChild(title);
-        if (group.examples.length === 0) {
+        const status = document.createElement('p');
+        status.className = 'note';
+        status.textContent = 'Loading examples…';
+        section.appendChild(status);
+        clips.appendChild(section);
+        const filenames = await findVideos(group.fileBase);
+        if (currentSelection !== index) return;
+        status.remove();
+        if (filenames.length === 0) {
           const empty = document.createElement('p');
           empty.className = 'note';
           empty.textContent = 'Examples coming soon.';
           section.appendChild(empty);
         }
-        group.examples.forEach(file => {
+        filenames.forEach(file => {
           const video = document.createElement('video');
           video.controls = true;
           video.preload = 'metadata';
@@ -97,7 +124,6 @@
           video.src = 'videos/' + file;
           section.appendChild(video);
         });
-        clips.appendChild(section);
       });
       main.appendChild(clips);
     }
