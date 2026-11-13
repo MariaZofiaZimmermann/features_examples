@@ -17,6 +17,7 @@
     .clips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 25px; }
     h3 { font-size: 16px; margin: 0 0 12px; }
     video { display: block; width: 100%; aspect-ratio: 16/9; background: #eee; }
+    section video:not(:first-of-type) { margin-top: 22px; }
     .note { color: #666; font-size: 13px; line-height: 1.5; }
     footer { margin-top: 55px; padding-top: 20px; border-top: 1px solid #ddd; color: #777; font-size: 13px; }
     @media (max-width: 650px) { body { padding: 30px 18px; } .clips { grid-template-columns: 1fr; } }
@@ -24,19 +25,38 @@
 </head>
 <body>
   <h1>Animated Movie Features</h1>
-  <p class="intro">Representative animated movie scenes illustrating high and low values of annotated features.</p>
+  <p class="intro">Representative animated movie scenes illustrating different values of annotated features.</p>
   <nav class="categories" id="categories" aria-label="Feature categories"></nav>
   <main id="feature-content" aria-live="polite"></main>
   <footer>Supplementary material accompanying the research paper.</footer>
   <script>
-    // To add a clip, put the MP4 file in the videos folder and update its filename below.
+    // Add as many filenames as needed to each examples array.
+    // Only list files that you have actually uploaded into videos/.
     const features = [
-      { name: 'Theory of Mind', color: '#008000', high: 'theory-of-mind-high.mp4', low: 'theory-of-mind-low.mp4' },
-      { name: 'Social Interaction', color: '#403878', high: 'social-interaction-high.mp4', low: 'social-interaction-low.mp4' },
-      { name: 'Number of People', color: '#80A4C3', high: 'number-of-people-high.mp4', low: 'number-of-people-low.mp4' },
-      { name: 'Faces', color: '#1D6080', high: 'faces-high.mp4', low: 'faces-low.mp4' },
-      { name: 'Valence', color: '#CC6948', high: 'valence-high.mp4', low: 'valence-low.mp4' },
-      { name: 'Arousal', color: '#D5A6B0', high: 'arousal-high.mp4', low: 'arousal-low.mp4' }
+      { name: 'Theory of Mind', color: '#008000', groups: [
+        { label: 'ToM Present', examples: ['theory-of-mind-high.mp4'] },
+        { label: 'ToM Absent', examples: [] }
+      ] },
+      { name: 'Social Interaction', color: '#403878', groups: [
+        { label: 'Interaction Present', examples: [] },
+        { label: 'Interaction Absent', examples: [] }
+      ] },
+      { name: 'Number of People', color: '#80A4C3', groups: [
+        { label: 'Multiple Characters', examples: [] },
+        { label: 'No Characters', examples: [] }
+      ] },
+      { name: 'Faces', color: '#1D6080', groups: [
+        { label: 'Faces Present', examples: [] },
+        { label: 'Faces Absent', examples: [] }
+      ] },
+      { name: 'Valence', color: '#CC6948', groups: [
+        { label: 'Positive Valence', examples: [] },
+        { label: 'Negative Valence', examples: [] }
+      ] },
+      { name: 'Arousal', color: '#D5A6B0', groups: [
+        { label: 'High Arousal', examples: [] },
+        { label: 'Low Arousal', examples: [] }
+      ] }
     ];
     const nav = document.getElementById('categories');
     const main = document.getElementById('feature-content');
@@ -58,19 +78,25 @@
       main.appendChild(heading);
       const clips = document.createElement('div');
       clips.className = 'clips';
-      [['High feature value', feature.high], ['Low feature value', feature.low]].forEach(([label, file]) => {
+      feature.groups.forEach(group => {
         const section = document.createElement('section');
         const title = document.createElement('h3');
-        title.textContent = label;
-        const video = document.createElement('video');
-        video.controls = true;
-        video.preload = 'metadata';
-        video.setAttribute('playsinline', '');
-        video.src = 'videos/' + file;
-        const note = document.createElement('p');
-        note.className = 'note';
-        note.textContent = 'Scene example';
-        section.append(title, video, note);
+        title.textContent = group.label;
+        section.appendChild(title);
+        if (group.examples.length === 0) {
+          const empty = document.createElement('p');
+          empty.className = 'note';
+          empty.textContent = 'Examples coming soon.';
+          section.appendChild(empty);
+        }
+        group.examples.forEach(file => {
+          const video = document.createElement('video');
+          video.controls = true;
+          video.preload = 'metadata';
+          video.setAttribute('playsinline', '');
+          video.src = 'videos/' + file;
+          section.appendChild(video);
+        });
         clips.appendChild(section);
       });
       main.appendChild(clips);
