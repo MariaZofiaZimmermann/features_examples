@@ -7,16 +7,16 @@
   <style>
     :root { font-family: Arial, Helvetica, sans-serif; color: #222; background: #fff; }
     * { box-sizing: border-box; }
-    body { max-width: 1320px; margin: 0 auto; padding: 55px 24px 80px; }
+    body { max-width: 1200px; margin: 0 auto; padding: 55px 24px 80px; }
     h1 { font-size: 26px; font-weight: 600; margin: 0 0 12px; }
     .intro { color: #555; line-height: 1.5; margin: 0 0 35px; }
     .categories { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 38px; }
     .category { background: white; border: 1px solid #ccc; border-left: 7px solid var(--feature-color); padding: 12px 16px; font: inherit; cursor: pointer; text-align: left; }
     .category:hover, .category[aria-pressed="true"] { background: #f3f3f3; border-color: #777; border-left-color: var(--feature-color); }
     h2 { font-size: 21px; font-weight: 600; margin: 0 0 22px; padding-left: 13px; border-left: 7px solid var(--feature-color); }
-    .clips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px; }
+    .clips { display: grid; grid-template-columns: minmax(0, 1fr); gap: 42px; }
     h3 { font-size: 16px; margin: 0 0 12px; }
-    video { display: block; width: 100%; aspect-ratio: 16/9; background: #eee; }
+    video { display: block; width: 100%; max-width: 1100px; aspect-ratio: 16/9; background: #eee; }
     section video:not(:first-of-type) { margin-top: 22px; }
     .note { color: #666; font-size: 13px; line-height: 1.5; }
     footer { margin-top: 55px; padding-top: 20px; border-top: 1px solid #ddd; color: #777; font-size: 13px; }
