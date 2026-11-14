@@ -12,5 +12,3 @@ Place MP4 files in `videos/` with the filenames listed in `index.html`, e.g. `th
 2. Upload `index.html` and the `videos` folder (including your MP4 files).
 3. In repository **Settings → Pages**, select **Deploy from a branch**, branch **main**, folder **/(root)**, and save.
 4. Your website will be at `https://YOUR-USERNAME.github.io/animated-movie-features/` once deployment completes.
-
-Only publish movie clips you have the right to share. For large video files, consider an appropriately licensed external video host.
